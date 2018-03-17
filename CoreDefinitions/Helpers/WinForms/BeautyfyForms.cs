@@ -103,5 +103,16 @@ namespace CoreDefinitions.Helpers
             lbl.Height = 20;
             return lbl;
         }
+
+        public static TextBox CreateMLTextBox(Point pos, int width, int height)
+        {
+            var txtbx = new TextBox();
+            txtbx.Location = pos;
+            txtbx.Multiline = true;
+            txtbx.Width = width;
+            txtbx.Height = height;
+            txtbx.ScrollBars = ScrollBars.Both;
+            return txtbx;
+        }
     }
 }

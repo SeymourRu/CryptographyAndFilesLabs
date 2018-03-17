@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace CoreDefinitions.Tasks
 {
-    class Crypto_Task2_1 : ITask<Crypto_Task2_1>, IBaseTask
+    public class Files_Task2_2 : ITask<Files_Task2_2>, IBaseTask
     {
         TaskAppType _subSystemType;
         public TaskAppType SubSystemType
@@ -21,7 +21,7 @@ namespace CoreDefinitions.Tasks
             }
         }
 
-        public Crypto_Task2_1()
+        public Files_Task2_2()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
         }
