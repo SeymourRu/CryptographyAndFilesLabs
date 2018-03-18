@@ -31,27 +31,54 @@ namespace CoreDefinitions.Helpers
         public BinaryTree<T> Right;
 
 
-        public string getTreeView()
+        public string getTreeView(bool markUnused)
         {
             StringBuilder output = new StringBuilder();
-            getNode(output, 0);
+            getNode(output, 0, markUnused);
             return output.ToString();
         }
 
-        private void getNode(StringBuilder output, int depth)
+        private void getNode(StringBuilder output, int depth, bool markUnused)
         {
-
             if (Right != null)
             {
-                Right.getNode(output, depth + 1);
+                Right.getNode(output, depth + 1, markUnused);
+            }
+            else
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
             }
 
-            output.Append('\t', depth);
-            output.AppendLine(_value.ToString());
+            if (this.Value == null)
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth);
+                    output.AppendLine("X");
+                }
+            }
+            else
+            {
+                output.Append('\t', depth);
+                output.AppendLine(_value.ToString());
+            }
+
 
             if (Left != null)
             {
-                Left.getNode(output, depth + 1);
+                Left.getNode(output, depth + 1, markUnused);
+            }
+            else
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
             }
         }
     }
@@ -82,7 +109,5 @@ namespace CoreDefinitions.Helpers
         {
             return source.Right;
         }
-
-
     }
 }

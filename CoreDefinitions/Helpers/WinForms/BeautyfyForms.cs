@@ -74,7 +74,7 @@ namespace CoreDefinitions.Helpers
             return progressBar;
         }
 
-        public static Timer CreateTimer(EventHandler onTick,int tickInterval = 1000)
+        public static Timer CreateTimer(EventHandler onTick, int tickInterval = 1000)
         {
             var tim = new Timer();
             tim.Interval = tickInterval;
@@ -94,12 +94,20 @@ namespace CoreDefinitions.Helpers
             return textBox;
         }
 
-        public static Label CreateLabel(Point pos,string text)
+        public static Label CreateLabel(Point pos, string text,bool custom = false,int len = 0)
         {
             var lbl = new Label();
             lbl.Location = pos;
             lbl.Text = text;
-            lbl.Width = text.Length * 35;
+            if (custom)
+            {
+                lbl.Width = len;
+            }
+            else
+            {
+                lbl.Width = text.Length * 35;
+            }
+            
             lbl.Height = 20;
             return lbl;
         }
@@ -113,6 +121,19 @@ namespace CoreDefinitions.Helpers
             txtbx.Height = height;
             txtbx.ScrollBars = ScrollBars.Both;
             return txtbx;
+        }
+
+        public static CheckBox CreateCheckBox(Point pos, bool state)
+        {
+            var chkbx = new CheckBox();
+            chkbx.Location = pos;
+
+            if (state)
+            {
+                chkbx.CheckState = CheckState.Checked;
+            }
+
+            return chkbx;
         }
     }
 }

@@ -20,8 +20,8 @@ namespace CoreDefinitions.Tasks
         TextBox _randomInput;
         TextBox _randomMin;
         TextBox _randomMax;
-        ListBox logLstBox;
         TextBox treeViewer;
+        CheckBox _addXToEnd;
 
         public TaskAppType SubSystemType
         {
@@ -65,7 +65,8 @@ namespace CoreDefinitions.Tasks
 
                 if (int.TryParse(text, out res))
                 {
-                    AddNewValue(res);
+                    //AddNewValue(res);
+                    AddNewValueRewritten(res);
                 }
                 else
                 {
@@ -114,6 +115,12 @@ namespace CoreDefinitions.Tasks
                 {
                     _tree = new BinaryTree<int?>(null);
                     treeViewer.Clear();
+                    if (Math.Abs(min - max) < res)
+                    {
+                        MessageBox.Show("Cлющай, ставь нормалные пределы, окда?");
+                        return;
+                    }
+
                     GenerateRandomTree(res, min, max);
                 }
                 else
@@ -125,7 +132,17 @@ namespace CoreDefinitions.Tasks
 
             form.Controls.Add(BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
             {
-                treeViewer.Text = _tree.getTreeView();
+                treeViewer.Text = _tree.getTreeView(_addXToEnd.Checked);
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton(" Экспорт ", new Point(0, 140), (o, k) =>
+            {
+                SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Бинарное деревце", "btree");
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeView(_addXToEnd.Checked));
+                }
             }));
 
             _singleInput = BeautyfyForms.CreateTextBox(new Point(150, 43), false);
@@ -145,6 +162,11 @@ namespace CoreDefinitions.Tasks
 
             treeViewer = BeautyfyForms.CreateMLTextBox(new Point(0, 250 + 5), 750, 200);
             form.Controls.Add(treeViewer);
+
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 105), "Добавлять Х в качестве null-ветвей", true, 190));
+
+            _addXToEnd = BeautyfyForms.CreateCheckBox(new Point(340, 100), false);
+            form.Controls.Add(_addXToEnd);
 
         }
 
@@ -224,6 +246,66 @@ namespace CoreDefinitions.Tasks
             return;
         }
 
+        private void AddNewValueRewritten(int key)
+        {
+            //T1
+            var p = _tree;
+            //T1.5
+            if (p.Value == null)
+            {
+                p.Value = key;
+                return;
+            }
+
+            while (true)
+            {
+                if (key < p.Key())
+                {
+                    if (p.LLink() != null)
+                    {
+                        p = p.LLink();
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (key > p.Key())
+                {
+                    if (p.RLink() != null)
+                    {
+                        p = p.RLink();
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (key == p.Key())
+                {
+                    //success, but we already have this key,so...
+                    return;
+                }
+            }
+
+            var q = _tree.NewNode(key);
+            if (key < p.Key())
+            {
+                p.Left = q;
+            }
+            else
+            {
+                p.Right = q;
+            }
+
+            p = q;
+            return;
+        }
+
         private void GenerateRandomTree(int elementNum, int min, int max)
         {
             var uniqVals = new HashSet<int>();
@@ -237,7 +319,8 @@ namespace CoreDefinitions.Tasks
                 else
                 {
                     uniqVals.Add(newVal);
-                    AddNewValue(newVal);
+                    //AddNewValue(newVal);
+                    AddNewValueRewritten(newVal);
                 }
             }
         }
