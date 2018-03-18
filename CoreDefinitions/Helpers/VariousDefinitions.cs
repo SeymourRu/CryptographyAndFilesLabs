@@ -355,6 +355,17 @@ namespace CoreDefinitions.Helpers
                     }
             }
         }
+
+        public static IntPtr GetAdressOfObject(object o)
+        {
+            IntPtr ptr = IntPtr.Zero;
+            unsafe
+            {
+                TypedReference tr = __makeref(o);
+                ptr = **(IntPtr**)(&tr);
+            }
+            return ptr;
+        }
     }
 
     public static class LinkedListExtensions

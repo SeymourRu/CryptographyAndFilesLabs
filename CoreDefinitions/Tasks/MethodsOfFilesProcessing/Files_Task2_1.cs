@@ -14,7 +14,7 @@ namespace CoreDefinitions.Tasks
     {
         TaskAppType _subSystemType;
         BinaryTree<int?> _tree;
-        Random random = new Random();
+        Random random;
 
         TextBox _singleInput;
         TextBox _randomInput;
@@ -35,6 +35,7 @@ namespace CoreDefinitions.Tasks
         {
             _subSystemType = Helpers.TaskAppType.GUI;
             _tree = new BinaryTree<int?>(null);
+            random = new Random();
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
@@ -142,7 +143,7 @@ namespace CoreDefinitions.Tasks
                 var keys = new List<int>();
                 Helper.LoadFile("Список ключей", "keylst", keys);
 
-                foreach(var key in keys)
+                foreach (var key in keys)
                 {
                     AddNewValueRewritten(key);
                 }

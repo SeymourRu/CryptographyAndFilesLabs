@@ -13,8 +13,8 @@ namespace CoreDefinitions.Tasks
     public class Files_Task2_2 : ITask<Files_Task2_2>, IBaseTask
     {
         TaskAppType _subSystemType;
-        unsafe BinaryTree<int?> _tree;
-        Random random = new Random();
+        BinaryTree<int?> _tree;
+        Random random;
 
         TextBox _singleInput;
         TextBox _randomInput;
@@ -35,6 +35,7 @@ namespace CoreDefinitions.Tasks
         {
             _subSystemType = Helpers.TaskAppType.GUI;
             _tree = new BinaryTree<int?>(null);
+            random = new Random();
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
@@ -93,7 +94,7 @@ namespace CoreDefinitions.Tasks
                     treeViewer.Clear();
                     if (Math.Abs(min - max) < res)
                     {
-                        MessageBox.Show("Cлющай, ставь нормалные пределы, окда?");
+                        MessageBox.Show("Cлющай, став нармалные пределы, окда?");
                         return;
                     }
 
@@ -483,18 +484,6 @@ namespace CoreDefinitions.Tasks
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-
-        private IntPtr GetAdressOfObject(object o)
-        {
-            IntPtr ptr = IntPtr.Zero;
-            unsafe
-            {
-                TypedReference tr = __makeref(o);
-                ptr = **(IntPtr**)(&tr);
-            }
-            return ptr;
         }
     }
 }
