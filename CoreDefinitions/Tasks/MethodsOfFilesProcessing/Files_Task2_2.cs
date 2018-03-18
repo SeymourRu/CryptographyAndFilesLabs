@@ -13,6 +13,16 @@ namespace CoreDefinitions.Tasks
     public class Files_Task2_2 : ITask<Files_Task2_2>, IBaseTask
     {
         TaskAppType _subSystemType;
+        BinaryTree<int?> _tree;
+        Random random = new Random();
+
+        TextBox _singleInput;
+        TextBox _randomInput;
+        TextBox _randomMin;
+        TextBox _randomMax;
+        TextBox treeViewer;
+        CheckBox _addXToEnd;
+
         public TaskAppType SubSystemType
         {
             get
@@ -24,9 +34,217 @@ namespace CoreDefinitions.Tasks
         public Files_Task2_2()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
+            _tree = new BinaryTree<int?>(null);
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
+        {
+            form.Text = "Задание № 2";
+            form.SetDefaultVals(new System.Drawing.Size(800, 500));
+            form.Controls.Add(BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
+            {
+                _tree = new BinaryTree<int?>(null);
+                treeViewer.Clear();
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(250, 10), (o, k) =>
+            {
+                MessageBox.Show("Задача № 2. Параграф 6.2.2, алгоритм D (уделание узла дерева)");
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 40), (o, k) =>
+            {
+                if (string.IsNullOrEmpty(_randomInput.Text))
+                {
+                    MessageBox.Show("Введите кол-во элементов для добавления");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(_randomMin.Text))
+                {
+                    MessageBox.Show("Введите минимальное число");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(_randomMax.Text))
+                {
+                    MessageBox.Show("Введите максимальное число");
+                    return;
+                }
+
+                int min = 0, max = 0;
+                try
+                {
+                    min = int.Parse(_randomMin.Text);
+                    max = int.Parse(_randomMax.Text);
+                }
+                catch
+                {
+                    MessageBox.Show("Пределы не валидны");
+                    return;
+                }
+
+                var text = _randomInput.Text;
+                int res;
+
+                if (int.TryParse(text, out res))
+                {
+                    _tree = new BinaryTree<int?>(null);
+                    treeViewer.Clear();
+                    if (Math.Abs(min - max) < res)
+                    {
+                        MessageBox.Show("Cлющай, ставь нормалные пределы, окда?");
+                        return;
+                    }
+
+                    GenerateRandomTree(res, min, max);
+                }
+                else
+                {
+                    MessageBox.Show("Это было не число, да?..");
+                    return;
+                }
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton("Удалить значение", new Point(0, 70), (o, k) =>
+            {
+                if (string.IsNullOrEmpty(_singleInput.Text))
+                {
+                    MessageBox.Show("Нет текста для поиска");
+                    return;
+                }
+
+                var text = _singleInput.Text;
+                int res;
+
+                if (int.TryParse(text, out res))
+                {
+                    RemoveNode(res);
+                }
+                else
+                {
+                    MessageBox.Show("Это было не число, да?..");
+                    return;
+                }
+
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
+            {
+                treeViewer.Text = _tree.getTreeView(_addXToEnd.Checked);
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton(" Экспорт ", new Point(0, 140), (o, k) =>
+            {
+                SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Бинарное деревце", "btree");
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeView(_addXToEnd.Checked));
+                }
+            }));
+
+            _randomInput = BeautyfyForms.CreateTextBox(new Point(290, 43), false);
+            _randomInput.Text = "20";
+            form.Controls.Add(_randomInput);
+
+            _randomMin = BeautyfyForms.CreateTextBox(new Point(400, 43), false);
+            _randomMin.Text = "1";
+            form.Controls.Add(_randomMin);
+
+            _randomMax = BeautyfyForms.CreateTextBox(new Point(510, 43), false);
+            _randomMax.Text = "100";
+            form.Controls.Add(_randomMax);
+
+            _singleInput = BeautyfyForms.CreateTextBox(new Point(150, 73), false);
+            form.Controls.Add(_singleInput);
+
+            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(0, 250 + 5), 750, 200);
+            form.Controls.Add(treeViewer);
+
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 105), "Добавлять Х в качестве null-ветвей", true, 190));
+
+            _addXToEnd = BeautyfyForms.CreateCheckBox(new Point(340, 100), false);
+            form.Controls.Add(_addXToEnd);
+        }
+
+        private void AddNewValue(int key)
+        {
+            var p = _tree;
+            if (p.Value == null)
+            {
+                p.Value = key;
+                return;
+            }
+
+            while (true)
+            {
+                if (key < p.Key())
+                {
+                    if (p.LLink() != null)
+                    {
+                        p = p.LLink();
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (key > p.Key())
+                {
+                    if (p.RLink() != null)
+                    {
+                        p = p.RLink();
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (key == p.Key())
+                {
+                    //success, but we already have this key,so...
+                    return;
+                }
+            }
+
+            var q = _tree.NewNode(key);
+            if (key < p.Key())
+            {
+                p.Left = q;
+            }
+            else
+            {
+                p.Right = q;
+            }
+
+            p = q;
+            return;
+        }
+
+        private void GenerateRandomTree(int elementNum, int min, int max)
+        {
+            var uniqVals = new HashSet<int>();
+            for (int i = 0; i < elementNum; i++)
+            {
+                var newVal = random.Next(min, max);
+                if (uniqVals.Contains(newVal))
+                {
+                    i--;
+                }
+                else
+                {
+                    uniqVals.Add(newVal);
+                    AddNewValue(newVal);
+                }
+            }
+        }
+    
+        private void RemoveNode(int key)
         {
 
         }
