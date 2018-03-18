@@ -67,6 +67,7 @@ namespace CoreDefinitions.Tasks
                 {
                     //AddNewValue(res);
                     AddNewValueRewritten(res);
+                    treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
                 }
                 else
                 {
@@ -117,11 +118,12 @@ namespace CoreDefinitions.Tasks
                     treeViewer.Clear();
                     if (Math.Abs(min - max) < res)
                     {
-                        MessageBox.Show("Cлющай, ставь нормалные пределы, окда?");
+                        MessageBox.Show("Cлющай, став нармалные пределы, окда?");
                         return;
                     }
 
                     GenerateRandomTree(res, min, max);
+                    treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
                 }
                 else
                 {
@@ -132,10 +134,23 @@ namespace CoreDefinitions.Tasks
 
             form.Controls.Add(BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
             {
-                treeViewer.Text = _tree.getTreeView(_addXToEnd.Checked);
+                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
             }));
 
-            form.Controls.Add(BeautyfyForms.AddButton(" Экспорт ", new Point(0, 140), (o, k) =>
+            form.Controls.Add(BeautyfyForms.AddButton(" Импорт ", new Point(0, 140), (o, k) =>
+            {
+                var keys = new List<int>();
+                Helper.LoadFile("Список ключей", "keylst", keys);
+
+                foreach(var key in keys)
+                {
+                    AddNewValueRewritten(key);
+                }
+
+                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
+            }));
+
+            form.Controls.Add(BeautyfyForms.AddButton(" Экспорт ", new Point(80, 140), (o, k) =>
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
                 saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Бинарное деревце", "btree");
@@ -160,10 +175,14 @@ namespace CoreDefinitions.Tasks
             _randomMax.Text = "100";
             form.Controls.Add(_randomMax);
 
-            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(0, 250 + 5), 750, 200);
+            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 200);
             form.Controls.Add(treeViewer);
 
             form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 105), "Добавлять Х в качестве null-ветвей", true, 190));
+
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(330, 50), "N", true, 10));
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(430, 50), "Min", true, 25));
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(540, 50), "Max", true, 30));
 
             _addXToEnd = BeautyfyForms.CreateCheckBox(new Point(340, 100), false);
             form.Controls.Add(_addXToEnd);
@@ -248,9 +267,7 @@ namespace CoreDefinitions.Tasks
 
         private void AddNewValueRewritten(int key)
         {
-            //T1
             var p = _tree;
-            //T1.5
             if (p.Value == null)
             {
                 p.Value = key;

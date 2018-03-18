@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace CoreDefinitions.Helpers
 {
+    public enum Branch
+    {
+        Root,
+        Right,
+        Left,
+    }
+
     public class BinaryTree<T>
     {
         private T _value;
@@ -80,6 +87,23 @@ namespace CoreDefinitions.Helpers
                     output.AppendLine("X");
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return _value.ToString() + " - " + GetAdressOfObject();
+        }
+
+        private IntPtr GetAdressOfObject()
+        {
+            IntPtr ptr = IntPtr.Zero;
+            var xx = this;
+            unsafe
+            {
+                TypedReference tr = __makeref(xx);
+                ptr = **(IntPtr**)(&tr);
+            }
+            return ptr;
         }
     }
 
