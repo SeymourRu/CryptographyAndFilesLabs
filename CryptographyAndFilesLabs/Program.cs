@@ -22,10 +22,14 @@ namespace CryptographyAndFilesLabs
             builder.RegisterType<Crypto_Task1_1>().As<ITask<Crypto_Task1_1>>().As<IBaseTask>();
             builder.RegisterType<Crypto_Task1_2>().As<ITask<Crypto_Task1_2>>().As<IBaseTask>();
             builder.RegisterType<Crypto_Task1_3>().As<ITask<Crypto_Task1_3>>().As<IBaseTask>();
+
+            builder.RegisterType<Crypto_Task2_1>().As<ITask<Crypto_Task2_1>>().As<IBaseTask>();
+            //builder.RegisterType<Crypto_Task2_2>().As<ITask<Crypto_Task2_2>>().As<IBaseTask>();
         }
 
         private static void LoadFilesProcessing(ContainerBuilder builder)
         {
+            builder.RegisterType<Files_Task1_1>().As<ITask<Files_Task1_1>>().As<IBaseTask>();
             builder.RegisterType<Files_Task1_2>().As<ITask<Files_Task1_2>>().As<IBaseTask>();
             builder.RegisterType<Files_Task1_3>().As<ITask<Files_Task1_3>>().As<IBaseTask>();
 

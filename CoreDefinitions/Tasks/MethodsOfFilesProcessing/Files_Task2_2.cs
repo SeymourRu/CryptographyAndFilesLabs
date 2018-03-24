@@ -129,7 +129,7 @@ namespace CoreDefinitions.Tasks
                         _tree = new BinaryTree<int?>(null);
                     }
 
-                    //funny but let`s skip this~
+                    //funny but let`si skip this~
                     treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
                 }
                 else

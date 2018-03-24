@@ -37,7 +37,7 @@ namespace CoreDefinitions.Tasks
                 MessageBox.Show("Sry, no cookies here!");
                 SystemSounds.Exclamation.Play();
                 PlayMusic();
-                MessageBox.Show("That`s all folks!");
+                MessageBox.Show("That`si all folks!");
             }));
         }
 
