@@ -10,9 +10,10 @@ using System.Windows.Forms;
 
 namespace CoreDefinitions.Tasks
 {
-    public class Files_Task2_1 : ITask<Files_Task2_1>, IBaseTask
+    public class Files_Task2_3 : ITask<Files_Task2_3>, IBaseTask
     {
         TaskAppType _subSystemType;
+        BinaryTree<int?, SelfOrganizeIndexNode> _head;
         BinaryTree<int?, SelfOrganizeIndexNode> _tree;
         Random random;
 
@@ -34,59 +35,38 @@ namespace CoreDefinitions.Tasks
             }
         }
 
-        public Files_Task2_1()
+        public Files_Task2_3()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
             _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+            _head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+            _head.Right = _tree;
+            _head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
             random = new Random();
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
         {
-            form.Text = "Задание № 1";
+            form.Text = "Задание № 3";
             form.SetDefaultVals(new System.Drawing.Size(800, 500));
             var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
                 _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+                _head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+                _head.Right = _tree;
+                _head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
                 treeViewer.Clear();
             });
 
             _buttonsToHide.Add(tmpbutt);
             form.Controls.Add(tmpbutt);
 
-            form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(250, 10), (o, k) =>
+            form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(200, 10), (o, k) =>
             {
-                MessageBox.Show("Задача № 1. Параграф 6.2.2, алгоритм Т (поиск по дереву со вставкой)");
+                MessageBox.Show("Задача № 3. Параграф 6.2.2, алгоритм A (поиск со вставкой по сбалансированному дереву)");
             }));
 
-            tmpbutt = BeautyfyForms.AddButton("Добавить значение", new Point(0, 40), (o, k) =>
-            {
-                if (string.IsNullOrEmpty(_singleInput.Text))
-                {
-                    MessageBox.Show("Нет текста для поиска");
-                    return;
-                }
-
-                var text = _singleInput.Text;
-                int res;
-
-                if (int.TryParse(text, out res))
-                {
-                    //AddNewValue(res);
-                    AddNewValueRewritten(res, default(SelfOrganizeIndexNode));
-                    treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
-                }
-                else
-                {
-                    MessageBox.Show("Это было не число, да?..");
-                    return;
-                }
-
-            });
-            _buttonsToHide.Add(tmpbutt);
-            form.Controls.Add(tmpbutt);
-
-            tmpbutt = BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 70), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 40), (o, k) =>
             {
                 if (string.IsNullOrEmpty(_randomInput.Text))
                 {
@@ -134,12 +114,15 @@ namespace CoreDefinitions.Tasks
                     treeViewer.Clear();
 
                     Task.Run(() =>
-                        {   
-                            _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-                            GenerateRandomTree(res, min, max);
-                        });
+                    {
+                        _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+                        _head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+                        _head.Right = _tree;
+                        _head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
+                        GenerateRandomTree(res, min, max);
+                    });
 
-                    treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
+                    treeViewer.Text = (_tree != null) ? _tree.getTreeViewPlus(_addXToEnd.Checked) : "";
 
                     _buttonsToHide.ForEach(x => x.Enabled = true);
                     _timerProgress.Stop();
@@ -156,11 +139,37 @@ namespace CoreDefinitions.Tasks
             _buttonsToHide.Add(tmpbutt);
             form.Controls.Add(tmpbutt);
 
-            tmpbutt = BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton("Добавить значение", new Point(0, 70), (o, k) =>
             {
-                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
+                if (string.IsNullOrEmpty(_singleInput.Text))
+                {
+                    MessageBox.Show("Нет текста для поиска");
+                    return;
+                }
+
+                var text = _singleInput.Text;
+                int res;
+
+                if (int.TryParse(text, out res))
+                {
+                    AddNewValueAndBalance(res, default(SelfOrganizeIndexNode));
+                    _tree = _head.Right;
+                }
+                else
+                {
+                    MessageBox.Show("Это было не число, да?..");
+                    return;
+                }
+
             });
 
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
+
+            tmpbutt = BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
+            {
+                treeViewer.Text = (_tree != null) ? _tree.getTreeViewPlus(_addXToEnd.Checked) : "";
+            });
             _buttonsToHide.Add(tmpbutt);
             form.Controls.Add(tmpbutt);
 
@@ -171,10 +180,11 @@ namespace CoreDefinitions.Tasks
 
                 foreach (var key in keys)
                 {
-                    AddNewValueRewritten(key, default(SelfOrganizeIndexNode));
+                    AddNewValueAndBalance(key, default(SelfOrganizeIndexNode));
                 }
 
-                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
+                _tree = _head.Right;
+                treeViewer.Text = (_tree != null) ? _tree.getTreeViewPlus(_addXToEnd.Checked) : "";
             });
             _buttonsToHide.Add(tmpbutt);
             form.Controls.Add(tmpbutt);
@@ -189,16 +199,15 @@ namespace CoreDefinitions.Tasks
                     _timerProgress.Start();
 
                     Task.Run(() =>
-                        {
-                            System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeView(_addXToEnd.Checked, false));
-                        });
+                    {
+                        System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeViewPlus(_addXToEnd.Checked, false));
+                    });
                     _buttonsToHide.ForEach(x => x.Enabled = true);
                     _timerProgress.Stop();
                     _progress.Value = _progress.Maximum;
                     MessageBox.Show("Сохранено!");
                 }
             });
-
             _buttonsToHide.Add(tmpbutt);
             form.Controls.Add(tmpbutt);
 
@@ -249,170 +258,209 @@ namespace CoreDefinitions.Tasks
                     _progress.Value = _progress.Value + 1;
                 }
             });
-
-            _singleInput = BeautyfyForms.CreateTextBox(new Point(150, 43), false);
-            form.Controls.Add(_singleInput);
-
-            _randomInput = BeautyfyForms.CreateTextBox(new Point(290, 73), false);
+            _randomInput = BeautyfyForms.CreateTextBox(new Point(290, 43), false);
             _randomInput.Text = "20";
             form.Controls.Add(_randomInput);
 
-            _randomMin = BeautyfyForms.CreateTextBox(new Point(400, 73), false);
+            _randomMin = BeautyfyForms.CreateTextBox(new Point(400, 43), false);
             _randomMin.Text = "1";
             form.Controls.Add(_randomMin);
 
-            _randomMax = BeautyfyForms.CreateTextBox(new Point(510, 73), false);
+            _randomMax = BeautyfyForms.CreateTextBox(new Point(510, 43), false);
             _randomMax.Text = "100";
             form.Controls.Add(_randomMax);
+
+            _singleInput = BeautyfyForms.CreateTextBox(new Point(150, 73), false);
+            form.Controls.Add(_singleInput);
 
             treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 200);
             form.Controls.Add(treeViewer);
 
             form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 105), "Добавлять Х в качестве null-ветвей", true, 190));
 
-            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(330, 50), "N", true, 10));
-            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(430, 50), "Min", true, 25));
-            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(540, 50), "Max", true, 30));
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(330, 20), "N", true, 10));
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(430, 20), "Min", true, 25));
+            form.Controls.Add(BeautyfyForms.CreateLabel(new Point(540, 20), "Max", true, 30));
 
             _addXToEnd = BeautyfyForms.CreateCheckBox(new Point(340, 100), false);
             form.Controls.Add(_addXToEnd);
-
         }
 
-        private void AddNewValue(int key, SelfOrganizeIndexNode val)
+        private void AddNewValueAndBalance(int key, SelfOrganizeIndexNode val)
         {
-            //T1
-            var p = _tree;
-            //T1.5
-            if (p.Key == null)
+            //Work with 1st insert
+            var init = _tree;
+            if (init.Key == null)
             {
-                p.Key = key;
-                p.Value = val;
+                init.Key = key;
+                init.Value = val;
+                init.Balance = 0;
+                _head.Left.Key = _head.Left.Key + 1;//!!
                 return;
             }
 
-            //T2
-        T2:
-            if (key < p.Key())
+            var a = 0xFF;//Why not then?
+        A1:
+            var T = _head;
+            var P = _head.RLink();
+            var S = P;
+        A2:
+            if (key < P.Key)
             {
-                goto T3;
+                goto A3;
             }
-
-            if (key > p.Key())
+            if (key > P.Key)
             {
-                goto T4;
+                goto A4;
             }
-
-            if (key == p.Key())
+            if (key == P.Key)
             {
-                //success
-
+                MessageBox.Show("Ключ " + key + " уже присутствует в дереве");
                 return;
             }
-
-            //T3
-        T3:
-            if (p.LLink() != null)
+        A3:
+            var Q = P.LLink();
+            if (Q == null)
             {
-                p = p.LLink();
-                goto T2;
+                Q = _tree.NewNode(null, default(SelfOrganizeIndexNode));
+                P.Left = Q;
+                goto A5;
             }
             else
             {
-                goto T5;
+                if (Q.Balance != 0)
+                {
+                    T = P;
+                    S = Q;
+                }
+                P = Q;
+                goto A2;
             }
 
-            //T4
-        T4:
-            if (p.RLink() != null)
+        A4:
+            Q = P.RLink();
+            if (Q == null)
             {
-                p = p.RLink();
-                goto T2;
+                Q = _tree.NewNode(null, default(SelfOrganizeIndexNode));
+                P.Right = Q;
+                goto A5;
             }
             else
             {
-                goto T5;
+                if (Q.Balance != 0)
+                {
+                    T = P;
+                    S = Q;
+                }
+                P = Q;
+                goto A2;
             }
-
-            //T5
-        T5:
-            //Set key in constructor
-            var q = _tree.NewNode(key, val);
-
-            //Will be set automatically
-            //LLink(q) = null;
-            //RLink(q) = null;
-
-            if (key < p.Key())
+        A5:
+            Q.Key = key;
+            Q.Value = val;//custom
+            Q.Left = Q.Right = null;
+            Q.Balance = 0;
+        A6:
+            if (key < S.Key)
             {
-                p.Left = q;
+                a = -1;
             }
             else
             {
-                p.Right = q;
+                a = 1;
             }
 
-            p = q;
+            var R = P = S.GetByA(a);
+
+            while (P.Key != Q.Key)
+            {
+                if (key < P.Key)
+                {
+                    P.Balance = -1;
+                    P = P.LLink();
+                }
+                else if (key > P.Key)
+                {
+                    P.Balance = 1;
+                    P = P.RLink();
+                }
+                else //(key == P.Key)
+                {
+                    P = Q;
+                    break;
+                }
+            }
+        A7:
+            //i
+            if (S.Balance == 0)
+            {
+                S.Balance = a;
+                _head.Left.Key = _head.Left.Key + 1;//!!
+                return;
+            }
+            //ii
+            if (S.Balance == -a)
+            {
+                S.Balance = 0;
+                return;
+            }
+            //iii
+            if (S.Balance == a)
+            {
+                if (R.Balance == a)
+                {
+                    goto A8;
+                }
+                if (R.Balance == -a)
+                {
+                    goto A9;
+                }
+                throw new Exception("?!?!?!");
+            }
             return;
-        }
+        A8:
+            P = R;
+            S.SetByA(a, R.GetByA(-a));
+            R.SetByA(-a, S);
+            S.Balance = R.Balance = 0;
+            goto A10;
+        A9:
+            P = R.GetByA(-a);
+            R.SetByA(-a, P.GetByA(a));
+            P.SetByA(a, R);
+            S.SetByA(a, P.GetByA(-a));
+            P.SetByA(-a, S);
 
-        private void AddNewValueRewritten(int key, SelfOrganizeIndexNode val)
-        {
-            var p = _tree;
-            if (p.Key == null)
+            if (P.Balance == a)
             {
-                p.Key = key;
-                p.Value = val;
-                return;
+                S.Balance = -a;
+                R.Balance = 0;
             }
-
-            while (true)
+            else if (P.Balance == 0)
             {
-                if (key < p.Key())
-                {
-                    if (p.LLink() != null)
-                    {
-                        p = p.LLink();
-                        continue;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                if (key > p.Key())
-                {
-                    if (p.RLink() != null)
-                    {
-                        p = p.RLink();
-                        continue;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                if (key == p.Key())
-                {
-                    //success, but we already have this key,so...
-                    return;
-                }
+                S.Balance = 0;
+                R.Balance = 0;
             }
-
-            var q = _tree.NewNode(key, val);
-            if (key < p.Key())
+            else if (P.Balance == -a)
             {
-                p.Left = q;
+                S.Balance = 0;
+                R.Balance = a;
             }
             else
             {
-                p.Right = q;
+                throw new Exception("?!?!?!?!?!?!?");
             }
 
-            p = q;
-            return;
+            P.Balance = 0;
+        A10:
+            if (S == T.RLink()) // S.Key ..
+            {
+                T.Right = P;
+            }
+            else
+            {
+                T.Left = P;
+            }
         }
 
         private void GenerateRandomTree(int elementNum, int min, int max)
@@ -428,10 +476,11 @@ namespace CoreDefinitions.Tasks
                 else
                 {
                     uniqVals.Add(newVal);
-                    //AddNewValue(newVal);
-                    AddNewValueRewritten(newVal, default(SelfOrganizeIndexNode));
+                    AddNewValueAndBalance(newVal, default(SelfOrganizeIndexNode));
                 }
             }
+
+            _tree = _head.Right;
         }
 
         async Task<bool> LoadIndexFile(string indexFile, string baseFile)
@@ -461,8 +510,10 @@ namespace CoreDefinitions.Tasks
 
             foreach (var val in List)
             {
-                AddNewValueRewritten((int)val.offset, val);
+                AddNewValueAndBalance((int)val.offset, val);
             }
+
+            _tree = _head.Right;
             return true;
         }
     }

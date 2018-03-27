@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace CoreDefinitions.Helpers
 {
@@ -436,6 +437,49 @@ namespace CoreDefinitions.Helpers
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+    }
+
+    public static class OwnConverter
+    {
+        public static byte[] GetBytes<T>(T str)
+        {
+            int size = Marshal.SizeOf(str);
+            byte[] arr = new byte[size];
+            GCHandle h = default(GCHandle);
+            try
+            {
+                h = GCHandle.Alloc(arr, GCHandleType.Pinned);
+                Marshal.StructureToPtr(str, h.AddrOfPinnedObject(), false);
+            }
+            finally
+            {
+                if (h.IsAllocated)
+                {
+                    h.Free();
+                }
+            }
+
+            return arr;
+        }
+
+        public static T FromBytes<T>(byte[] arr) where T : struct
+        {
+            T str = default(T);
+            GCHandle h = default(GCHandle);
+            try
+            {
+                h = GCHandle.Alloc(arr, GCHandleType.Pinned);
+                str = (T)Marshal.PtrToStructure(h.AddrOfPinnedObject(),str.GetType());
+            }
+            finally
+            {
+                if (h.IsAllocated)
+                {
+                    h.Free();
+                }
+            }
+            return str;
         }
     }
 }

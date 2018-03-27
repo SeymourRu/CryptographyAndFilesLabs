@@ -13,9 +13,12 @@ namespace CoreDefinitions.Tasks
     public class Files_Task2_2 : ITask<Files_Task2_2>, IBaseTask
     {
         TaskAppType _subSystemType;
-        BinaryTree<int?> _tree;
+        BinaryTree<int?, SelfOrganizeIndexNode> _tree;
         Random random;
 
+        List<Button> _buttonsToHide = new List<Button>();
+        Timer _timerProgress;
+        ProgressBar _progress;
         TextBox _singleInput;
         TextBox _randomInput;
         TextBox _randomMin;
@@ -34,7 +37,7 @@ namespace CoreDefinitions.Tasks
         public Files_Task2_2()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
-            _tree = new BinaryTree<int?>(null);
+            _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
             random = new Random();
         }
 
@@ -42,18 +45,21 @@ namespace CoreDefinitions.Tasks
         {
             form.Text = "Задание № 2";
             form.SetDefaultVals(new System.Drawing.Size(800, 500));
-            form.Controls.Add(BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
+            var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
-                _tree = new BinaryTree<int?>(null);
+                _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
                 treeViewer.Clear();
-            }));
+            });
+
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
 
             form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(200, 10), (o, k) =>
             {
                 MessageBox.Show("Задача № 2. Параграф 6.2.2, алгоритм D (удаление узла дерева)");
             }));
 
-            form.Controls.Add(BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 40), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 40), (o, k) =>
             {
                 if (string.IsNullOrEmpty(_randomInput.Text))
                 {
@@ -90,25 +96,40 @@ namespace CoreDefinitions.Tasks
 
                 if (int.TryParse(text, out res))
                 {
-                    _tree = new BinaryTree<int?>(null);
-                    treeViewer.Clear();
                     if (Math.Abs(min - max) < res)
                     {
                         MessageBox.Show("Cлющай, став нармалные пределы, окда?");
                         return;
                     }
 
-                    GenerateRandomTree(res, min, max);
+                    _buttonsToHide.ForEach(x => x.Enabled = false);
+                    _timerProgress.Start();
+					treeViewer.Clear();
+					
+					Task.Run(() =>
+                        {   
+							_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+							GenerateRandomTree(res, min, max);
+                        });
+					
                     treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
-                }
+
+					_buttonsToHide.ForEach(x => x.Enabled = true);
+                    _timerProgress.Stop();
+                    _progress.Value = _progress.Maximum;
+                    MessageBox.Show("Сгенерили!");
+				}
                 else
                 {
                     MessageBox.Show("Это было не число, да?..");
                     return;
                 }
-            }));
+            });
+			
+			_buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
 
-            form.Controls.Add(BeautyfyForms.AddButton("Удалить значение", new Point(0, 70), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton("Удалить значение", new Point(0, 70), (o, k) =>
             {
                 if (string.IsNullOrEmpty(_singleInput.Text))
                 {
@@ -126,7 +147,7 @@ namespace CoreDefinitions.Tasks
 
                     if (_tree == null)
                     {
-                        _tree = new BinaryTree<int?>(null);
+                        _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
                     }
 
                     //funny but let`si skip this~
@@ -138,36 +159,102 @@ namespace CoreDefinitions.Tasks
                     return;
                 }
 
-            }));
+            });
 
-            form.Controls.Add(BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
+
+            tmpbutt = BeautyfyForms.AddButton("Отобразить деревце", new Point(0, 100), (o, k) =>
             {
                 treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
-            }));
+            });
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
 
-            form.Controls.Add(BeautyfyForms.AddButton(" Импорт ", new Point(0, 140), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton(" Импорт ", new Point(0, 140), (o, k) =>
             {
                 var keys = new List<int>();
                 Helper.LoadFile("Список ключей", "keylst", keys);
 
                 foreach (var key in keys)
                 {
-                    AddNewValue(key);
+                    AddNewValue(key, default(SelfOrganizeIndexNode));
                 }
 
                 treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
-            }));
+            });
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
 
-            form.Controls.Add(BeautyfyForms.AddButton(" Экспорт ", new Point(80, 140), (o, k) =>
+            tmpbutt = BeautyfyForms.AddButton(" Экспорт ", new Point(80, 140), (o, k) =>
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
                 saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Бинарное деревце", "btree");
                 if (saveFile.ShowDialog() == DialogResult.OK)
                 {
-                    System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeView(_addXToEnd.Checked));
-                }
-            }));
+                    _buttonsToHide.ForEach(x => x.Enabled = false);
+                    _timerProgress.Start();
 
+                    Task.Run(() =>
+                        {
+                            System.IO.File.WriteAllText(saveFile.FileName, _tree.getTreeView(_addXToEnd.Checked, false));
+                        });
+                    _buttonsToHide.ForEach(x => x.Enabled = true);
+                    _timerProgress.Stop();
+                    _progress.Value = _progress.Maximum;
+                    MessageBox.Show("Сохранено!");
+                }
+            });
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
+
+            tmpbutt = BeautyfyForms.AddButton(" Импорт .index ", new Point(160, 140), async (o, k) =>
+            {
+                OpenFileDialog openDic = new OpenFileDialog();
+                openDic.Multiselect = false;
+                openDic.Filter = string.Format("{0} (*.{1})|*.{1}", "Index файл", "index");
+                if (openDic.ShowDialog() == DialogResult.OK)
+                {
+                    _buttonsToHide.ForEach(x => x.Enabled = false);
+                    var openedFile = System.IO.Path.ChangeExtension(openDic.FileName, null);
+                    var indexFile = openedFile + ".index";
+                    var baseFile = openedFile + ".base";
+                    _timerProgress.Start();
+                    var state = await Task.Run(() => LoadIndexFile(indexFile, baseFile));
+
+                    if (state != false)
+                    {
+                        MessageBox.Show("Готово! Дерево загружено.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ошибка загрузки дерева.");
+                        return;
+                    }
+
+                    _timerProgress.Stop();
+                    _progress.Value = _progress.Maximum;
+                    _buttonsToHide.ForEach(x => x.Enabled = true);
+                }
+            });
+
+            _buttonsToHide.Add(tmpbutt);
+            form.Controls.Add(tmpbutt);
+
+            _progress = BeautyfyForms.AddProgressBar(new Point(300, 140), form.Size, 0, 10);
+            form.Controls.Add(_progress);
+
+            _timerProgress = BeautyfyForms.CreateTimer((sender, EventArgs) =>
+            {
+                if (_progress.Value >= _progress.Maximum)
+                {
+                    _progress.Value = 0;
+                }
+                else
+                {
+                    _progress.Value = _progress.Value + 1;
+                }
+            });
             _randomInput = BeautyfyForms.CreateTextBox(new Point(290, 43), false);
             _randomInput.Text = "20";
             form.Controls.Add(_randomInput);
@@ -196,12 +283,12 @@ namespace CoreDefinitions.Tasks
             form.Controls.Add(_addXToEnd);
         }
 
-        private void AddNewValue(int key)
+        private void AddNewValue(int key,SelfOrganizeIndexNode val)
         {
             var p = _tree;
-            if (p.Value == null)
+            if (p.Key == null)
             {
-                p.Value = key;
+                p.Key = key;
                 return;
             }
 
@@ -240,7 +327,7 @@ namespace CoreDefinitions.Tasks
                 }
             }
 
-            var q = _tree.NewNode(key);
+            var q = _tree.NewNode(key,val);
             if (key < p.Key())
             {
                 p.Left = q;
@@ -254,10 +341,10 @@ namespace CoreDefinitions.Tasks
             return;
         }
 
-        private BinaryTree<int?> SearchValue(int key)
+        private BinaryTree<int?, SelfOrganizeIndexNode> SearchValue(int key)
         {
             var p = _tree;
-            if (p.Value == null)
+            if (p.Key == null)
             {
                 throw new Exception("Деревце-то пустое!");
             }
@@ -300,13 +387,13 @@ namespace CoreDefinitions.Tasks
             throw new Exception("Значение " + key + " не найдено!");
         }
 
-        private Branch SearchValue(int key, out BinaryTree<int?> upper, out BinaryTree<int?> value)
+        private Branch SearchValue(int key, out BinaryTree<int?, SelfOrganizeIndexNode> upper, out BinaryTree<int?, SelfOrganizeIndexNode> value)
         {
             var p = _tree;
-            BinaryTree<int?> parent = null;
+            BinaryTree<int?, SelfOrganizeIndexNode> parent = null;
             var res = Branch.Root;
 
-            if (p.Value == null)
+            if (p.Key == null)
             {
                 throw new Exception("Деревце-то пустое!");
             }
@@ -367,7 +454,7 @@ namespace CoreDefinitions.Tasks
                 else
                 {
                     uniqVals.Add(newVal);
-                    AddNewValue(newVal);
+                    AddNewValue(newVal, default(SelfOrganizeIndexNode));
                 }
             }
         }
@@ -376,7 +463,7 @@ namespace CoreDefinitions.Tasks
         {
             try
             {
-                BinaryTree<int?> upper, q;
+                BinaryTree<int?, SelfOrganizeIndexNode> upper, q;
                 var pos = SearchValue(key, out upper, out q);
             D1:
                 var t = q;
@@ -432,7 +519,7 @@ namespace CoreDefinitions.Tasks
         {
             try
             {
-                BinaryTree<int?> upper, q;
+                BinaryTree<int?, SelfOrganizeIndexNode> upper, q;
                 var pos = SearchValue(key, out upper, out q);
                 var t = q;
 
@@ -485,5 +572,38 @@ namespace CoreDefinitions.Tasks
                 MessageBox.Show(ex.Message);
             }
         }
+
+        async Task<bool> LoadIndexFile(string indexFile, string baseFile)
+        {
+            var _header = Helper.ReadFromBinaryFile<SelfOrganizeIndexHeader>(indexFile, 0);
+            if (_header.version == 0)
+            {
+                MessageBox.Show("Ошибка чтения заголовка");
+                return false;
+            }
+
+            MessageBox.Show("Заголовок успешно прочитан. Загрузка index файла займёт некоторое время, пожалуйста, подождите");
+            var List = Helper.ReadFromBinaryFileList<SelfOrganizeIndexNode>(indexFile, _header.nodesBeginOffset, 0, true);
+
+            if (List != null)
+            {
+                MessageBox.Show("index файл загружен.Строим дерево");
+            }
+            else
+            {
+                MessageBox.Show("ошибка загрузки");
+                return false;
+            }
+
+            //Mix it, so that tree will be at least semi-balanced
+            List.Shuffle();
+
+            foreach (var val in List)
+            {
+                AddNewValue((int)val.offset, val);
+            }
+            return true;
+        }
+
     }
 }
