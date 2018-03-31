@@ -55,7 +55,7 @@ namespace CryptographyAndFilesLabs
 
             LoadCryptography(builder);
             LoadFilesProcessing(builder);
-            LoadSandbox(builder);
+            //LoadSandbox(builder);
 
             Func<IContainer> factory = () => _container;
             builder.RegisterInstance(factory);

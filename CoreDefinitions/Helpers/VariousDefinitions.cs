@@ -482,4 +482,23 @@ namespace CoreDefinitions.Helpers
             return str;
         }
     }
+
+    public class KeyValueItem
+    {
+        public int Key { get; set; }
+        public double Probability { get; set; }
+
+        public KeyValueItem(int Key, double Probability)
+        {
+            this.Key = Key;
+            this.Probability = Probability;
+        }
+
+        public KeyValueItem() { }
+
+        public override string ToString()
+        {
+            return "Key " + Key.ToString() + " | Probability " + Probability.ToString();
+        }
+    }
 }
