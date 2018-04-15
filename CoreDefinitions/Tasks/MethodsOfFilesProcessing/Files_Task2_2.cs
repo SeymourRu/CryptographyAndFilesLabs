@@ -105,15 +105,16 @@ namespace CoreDefinitions.Tasks
                     _buttonsToHide.ForEach(x => x.Enabled = false);
                     _timerProgress.Start();
 					treeViewer.Clear();
-					
-					Task.Run(() =>
-                        {   
-							_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-							GenerateRandomTree(res, min, max);
+
+                    Task.Run(() =>
+                        {
+                            _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
+                            GenerateRandomTree(res, min, max);
+                        }).ContinueWith(result => 
+                        {
+                            treeViewer.BeginInvoke(new MethodInvoker(() => treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "")); 
                         });
 					
-                    treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
-
 					_buttonsToHide.ForEach(x => x.Enabled = true);
                     _timerProgress.Stop();
                     _progress.Value = _progress.Maximum;
@@ -150,7 +151,7 @@ namespace CoreDefinitions.Tasks
                         _tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
                     }
 
-                    //funny but let`si skip this~
+                    //funny but let`s skip this~
                     treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
                 }
                 else
@@ -283,7 +284,7 @@ namespace CoreDefinitions.Tasks
             form.Controls.Add(_addXToEnd);
         }
 
-        private void AddNewValue(int key,SelfOrganizeIndexNode val)
+        private void AddNewValue(int key, SelfOrganizeIndexNode val)
         {
             var p = _tree;
             if (p.Key == null)
@@ -327,7 +328,7 @@ namespace CoreDefinitions.Tasks
                 }
             }
 
-            var q = _tree.NewNode(key,val);
+            var q = _tree.NewNode(key, val);
             if (key < p.Key())
             {
                 p.Left = q;
@@ -485,6 +486,7 @@ namespace CoreDefinitions.Tasks
                 while (s.LLink() != null)
                 {
                     r = s;
+                    s = r.LLink();
                 }
                 s.Left = t.LLink();
                 r.Left = s.RLink();
@@ -541,6 +543,7 @@ namespace CoreDefinitions.Tasks
                     while (s.LLink() != null)
                     {
                         r = s;
+                        s = r.LLink();
                     }
                     s.Left = t.LLink();
                     r.Left = s.RLink();

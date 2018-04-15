@@ -120,9 +120,10 @@ namespace CoreDefinitions.Tasks
                         _head.Right = _tree;
                         _head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
                         GenerateRandomTree(res, min, max);
-                    });
-
-                    treeViewer.Text = (_tree != null) ? _tree.getTreeViewPlus(_addXToEnd.Checked) : "";
+                    }).ContinueWith(result =>
+                    {
+                        treeViewer.BeginInvoke(new MethodInvoker(() => treeViewer.Text = (_tree != null) ? _tree.getTreeViewPlus(_addXToEnd.Checked) : ""));
+                    }); ;
 
                     _buttonsToHide.ForEach(x => x.Enabled = true);
                     _timerProgress.Stop();
