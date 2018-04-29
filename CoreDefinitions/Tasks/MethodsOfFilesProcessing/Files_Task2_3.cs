@@ -63,7 +63,7 @@ namespace CoreDefinitions.Tasks
 
             form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(200, 10), (o, k) =>
             {
-                MessageBox.Show("Задача № 3. Параграф 6.2.2, алгоритм A (поиск со вставкой по сбалансированному дереву)");
+                MessageBox.Show("Задача № 3. Параграф 6.2.3, алгоритм A (поиск со вставкой по сбалансированному дереву)");
             }));
 
             tmpbutt = BeautyfyForms.AddButton("Сгенерировать дерево (N элементное)", new Point(0, 40), (o, k) =>
