@@ -73,6 +73,8 @@ namespace CoreDefinitions.Helpers
             return x;
         }
 
+        #region Pohling-Hellman
+
         public static List<long> Factorization(long p)
         {
             var d = 2;
@@ -180,5 +182,186 @@ namespace CoreDefinitions.Helpers
             }
             return new KeyValuePair<long, long>(x, (long)(BigInteger.Pow(q, (int)e)));
         }
+
+        #endregion Pohling-Hellman
+
+        #region Dixon
+        private static long FastExponentiation(long a, int n)
+        {
+            long ans = 1;
+            while (n > 0)
+            {
+                if ((n & 1) > 0)
+                {
+                    ans = ans * a;
+                }
+                a = a * a;
+                n = n >> 1;
+            }
+            return ans;
+        }
+
+        private static int deciToBinary(int num)
+        {
+            int bin;
+            if (num != 0)
+            {
+                bin = (num % 2) + 10 * deciToBinary(num / 2);
+                return bin;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static bool IsPower(int n)
+        {
+            if ((-n & n) == n)
+            {
+                return true;//2 ^ k
+            }
+            var lgn = 1 + (deciToBinary(Math.Abs(n)).ToString().Length - 2);
+            for (int b = 2; b < lgn; b++)
+            {
+                var lowa = 1L;
+                var higha = 1L << (lgn / b + 1);
+                while (lowa < (higha - 1))
+                {
+                    var mida = (lowa + higha) >> 1;
+                    var ab = FastExponentiation(mida, b);
+                    if (ab > n)
+                    {
+                        higha = mida;
+                    }
+                    else if (ab < n)
+                    {
+                        lowa = mida;
+                    }
+                    else
+                    {
+                        return true; //mida ^ b
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static IEnumerable<int> SieveOfEratosthenes(int num)
+        {
+            return Enumerable.Range(1, Convert.ToInt32(Math.Floor(Math.Sqrt(num))))
+                .Aggregate(Enumerable.Range(1, num).ToList(),
+                (result, index) =>
+                {
+                    result.RemoveAll(i => i > result[index] && i % result[index] == 0);
+                    return result;
+                }
+                );
+        }
+
+        public static bool IsSmooth(long num, List<long> baseFactor, out List<long> factors)
+        {
+            try
+            {
+                var simpleFactors = new List<long>();
+                int b, c;
+
+                while ((num % 2) == 0)
+                {
+                    num = num / 2;
+                    simpleFactors.Add(2);
+                }
+                b = 3; c = (int)Math.Sqrt(num) + 1;
+                while (b < c)
+                {
+                    if ((num % b) == 0)
+                    {
+                        if (num / b * b - num == 0)
+                        {
+                            simpleFactors.Add(b);
+                            num = num / b;
+                            c = (int)Math.Sqrt(num) + 1;
+                        }
+                        else
+                        {
+                            b += 2;
+                        }
+                    }
+                    else
+                    {
+                        b += 2;
+                    }
+                }
+
+                simpleFactors.Add(num);
+                factors = new List<long>();
+                foreach (var bf in baseFactor)
+                {
+                    factors.Add(simpleFactors.Count(x => x == bf));
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                factors = new List<long>();
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+                System.Windows.Forms.MessageBox.Show(ex.StackTrace);
+                return false;
+            }
+        }
+
+        public static int TheTruePowerfullGauss(List<List<double>> a, List<double> ans)
+        {
+            int n = (int)a.Count();
+            int m = (int)a[0].Count() - 1;
+            double eps = 0.0001;
+            List<int> where = new List<int>(Enumerable.Repeat(-1, m));
+            ans.AddRange(Enumerable.Repeat(-1.0, m));
+
+            for (int col = 0, row = 0; col < m && row < n; ++col)
+            {
+                int sel = row;
+                for (int i = row; i < n; ++i)
+                    if (Math.Abs(a[i][col]) > Math.Abs(a[sel][col]))
+                        sel = i;
+                if (Math.Abs(a[sel][col]) < eps)
+                    continue;
+                for (int i = col; i <= m; ++i)
+                {
+                    var value = a[sel][i];
+                    a[sel][i] = a[row][i];
+                    a[row][i] = value;
+                }
+                where[col] = row;
+
+                for (int i = 0; i < n; ++i)
+                    if (i != row)
+                    {
+                        double c = a[i][col] / a[row][col];
+                        for (int j = col; j <= m; ++j)
+                            a[i][j] -= a[row][j] * c;
+                    }
+                ++row;
+            }
+
+            for (int i = 0; i < m; ++i)
+                if (where[i] != -1)
+                    ans[i] = a[where[i]][m] / a[where[i]][i];
+            for (int i = 0; i < n; ++i)
+            {
+                double sum = 0;
+                for (int j = 0; j < m; ++j)
+                    sum += ans[j] * a[i][j];
+                if (Math.Abs(sum - a[i][m]) > eps)
+                    return 0;
+            }
+
+            for (int i = 0; i < m; ++i)
+                if (where[i] == -1)
+                    return int.MaxValue;
+            return 1;
+        }
+
+        #endregion Dixon
     }
 }

@@ -135,5 +135,21 @@ namespace CoreDefinitions.Helpers
 
             return chkbx;
         }
+
+        public static NumericUpDown CreateNumericUpDown(Point pos,int min,int max, bool onlyread)
+        {
+            var numericUpDown = new NumericUpDown();
+            numericUpDown.Location = pos;
+
+            numericUpDown.Minimum = min;
+            numericUpDown.Maximum = max;
+
+            if (onlyread)
+            {
+                numericUpDown.ReadOnly = true;
+            }
+
+            return numericUpDown;
+        }
     }
 }
