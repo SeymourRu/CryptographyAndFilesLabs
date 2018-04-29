@@ -6,13 +6,13 @@ Project have 2 main lab streams:
 
   >"Mathematical foundations of information security and information security" (kind of cryptography~) 
 
-											and
+and
 
   >"Modern methods of information storage and processing"
 
 ## Way it works ##
 
-Each task in each homeworke implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Programm.cs
+Each task in each homework implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Programm.cs
 
 ## Implemented tasks ##
 
@@ -40,6 +40,6 @@ Path|Definition
 ___basepath\MethodsOfFilesProcessing\Files_Task1_1.cs___|There is some database. If you know the probability distribution of query records, you can order the data in descending order of these probabilities, and thus, to achieve a more optimal search. The program reorders an array of integer keys according to a given probability distribution. Such distributions as geometric, binomial and wedge are used.
 ___basepath\MethodsOfFilesProcessing\Files_Task1_2.cs___|Self-organized file generation + some test readings
 ___basepath\MethodsOfFilesProcessing\Files_Task1_3.cs___|Search in Self-organized file
-___basepath\MethodsOfFilesProcessing\Files_Task2_1.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3 Sorting and searching. Paragraph 6.2.2, algorithm T (search for a tree with an insert)
-___basepath\MethodsOfFilesProcessing\Files_Task2_2.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3 Sorting and searching. Paragraph 6.2.2, algorithm D (removal of a tree node)
-___basepath\MethodsOfFilesProcessing\Files_Task2_3.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3 Sorting and searching. Paragraph 6.2.3, algorithm A (search with insertion on a balanced tree)
+___basepath\MethodsOfFilesProcessing\Files_Task2_1.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3. Sorting and searching. Paragraph 6.2.2, algorithm T (search for a tree with an insert)
+___basepath\MethodsOfFilesProcessing\Files_Task2_2.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3. Sorting and searching. Paragraph 6.2.2, algorithm D (removal of a tree node)
+___basepath\MethodsOfFilesProcessing\Files_Task2_3.cs___|DONALD E. KNUTH. The Art of Computer Programming. Volume 3. Sorting and searching. Paragraph 6.2.3, algorithm A (search with insertion on a balanced tree)
