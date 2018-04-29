@@ -2,20 +2,23 @@
 
 Special project which contains all implemented labs in 2nd term of MA(T)I magister programm
 
-Project have 2 main lab streams: 
-  "Mathematical foundations of information security and information security" (kind of cryptography~) 
-                                 and 
-  "Modern methods of information storage and processing"
+Project have 2 main lab streams:
 
-##Way it works##
+  >"Mathematical foundations of information security and information security" (kind of cryptography~) 
+
+											and
+
+  >"Modern methods of information storage and processing"
+
+## Way it works ##
 
 Each task in each homeworke implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Programm.cs
 
-##Implemented tasks##
+## Implemented tasks ##
 
 All tasks are located in CoreDefinitions\Tasks(let`s call it basepath). Here is a list of implemented tasks:
 
-###Mathematical foundations of information security and information security###
+### Mathematical foundations of information security and information security ###
 
 Path | Definition
 --------------------------------------------------------|----------------------------------------------------
@@ -30,7 +33,7 @@ ___basepath\Cryptography\Crypto_Task3_3.cs___|Pollard's p − 1 factorization al
 ___basepath\Cryptography\Crypto_Task3_4.cs___|Pohling-Hellman`s algorithm
 ___basepath\Cryptography\Crypto_CourseWork.cs___|Dixon's factorization algorithm
 
-###Modern methods of information storage and processing:###
+### Modern methods of information storage and processing: ###
 
 Path|Definition
 --------------------------------------------------------|----------------------------------------------------
