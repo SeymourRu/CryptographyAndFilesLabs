@@ -12,7 +12,7 @@ and
 
 ## Way it works ##
 
-Each task in each homework implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Programm.cs
+Each task in each homework implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Program.cs
 
 ## Implemented tasks ##
 
@@ -25,7 +25,6 @@ Path | Definition
 ___basepath\Cryptography\Crypto_Task1_1.cs___|A set is given, a permutation is given, and the set is derived using a permutation.
 ___basepath\Cryptography\Crypto_Task1_2.cs___|Given a set, set a mixed set, output a permutation.
 ___basepath\Cryptography\Crypto_Task1_2.cs___|Theorem: any set can be represented by decomposition into products of transpositions. Let's try to find a cyclic permutation and build a transposition.
-___basepath\Cryptography\Crypto_Task2_1.cs___|ρ - Pollard method (ordinary and parallel). Aim: find an x such that g ^ x = a % m
 ___basepath\Cryptography\Crypto_Task2_1.cs___|ρ - Pollard method (ordinary and parallel). Aim: find an x such that g ^ x = a % m
 ___basepath\Cryptography\Crypto_Task3_1.cs___|Fermat primality test
 ___basepath\Cryptography\Crypto_Task3_2.cs___|Rabin-Miller primality test
