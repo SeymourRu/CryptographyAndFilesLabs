@@ -14,6 +14,14 @@ and
 
 Each task in each homework implemented as a separate file.Avaliable tasks will be resolved by Autofac itself at runtime. This can be configured in Program.cs
 
+## What happens at runtime ##
+
+When program started, it will register all implementet classes in IoC container. Then, it will start a small form with task selection. From there, you can run each task.
+
+## What task consists of ##
+
+Any task have to be inherited from ITask<T>, IBaseTask, where T - name of task itself. First inherit - for autofac, second - for optimal search of all implemented tasks.
+
 ## Implemented tasks ##
 
 All tasks are located in CoreDefinitions\Tasks(let`s call it basepath). Here is a list of implemented tasks:
@@ -24,7 +32,7 @@ Path | Definition
 --------------------------------------------------------|----------------------------------------------------
 ___basepath\Cryptography\Crypto_Task1_1.cs___|A set is given, a permutation is given, and the set is derived using a permutation.
 ___basepath\Cryptography\Crypto_Task1_2.cs___|Given a set, set a mixed set, output a permutation.
-___basepath\Cryptography\Crypto_Task1_2.cs___|Theorem: any set can be represented by decomposition into products of transpositions. Let's try to find a cyclic permutation and build a transposition.
+___basepath\Cryptography\Crypto_Task1_3.cs___|Theorem: any set can be represented by decomposition into products of transpositions. Let's try to find a cyclic permutation and build a transposition.
 ___basepath\Cryptography\Crypto_Task2_1.cs___|ρ - Pollard method (ordinary and parallel). Aim: find an x such that g ^ x = a % m
 ___basepath\Cryptography\Crypto_Task3_1.cs___|Fermat primality test
 ___basepath\Cryptography\Crypto_Task3_2.cs___|Rabin-Miller primality test
