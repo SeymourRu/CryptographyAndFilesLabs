@@ -30,6 +30,9 @@ namespace CryptographyAndFilesLabs
             builder.RegisterType<Crypto_Task3_3>().As<ITask<Crypto_Task3_3>>().As<IBaseTask>();
             builder.RegisterType<Crypto_Task3_4>().As<ITask<Crypto_Task3_4>>().As<IBaseTask>();
 
+            builder.RegisterType<Crypto_Task4_1>().As<ITask<Crypto_Task4_1>>().As<IBaseTask>();
+            builder.RegisterType<Crypto_Task4_2>().As<ITask<Crypto_Task4_2>>().As<IBaseTask>();
+
             builder.RegisterType<Crypto_CourseWork>().As<ITask<Crypto_CourseWork>>().As<IBaseTask>();
             //builder.RegisterType<Crypto_Task2_2>().As<ITask<Crypto_Task2_2>>().As<IBaseTask>();
         }

@@ -71,7 +71,7 @@ namespace CoreDefinitions.Tasks
                 Process();
             }));
 
-            dgv = BeautyfyForms.AddDataGridView(new Point(0, 100), form.Size, 4, new string[] { "Множество", "Множество *", "Перестановка" });
+            dgv = BeautyfyForms.AddDataGridViewHeadersOnLeft(new Point(0, 100), form.Size, 4, new string[] { "Множество", "Множество *", "Перестановка" });
             form.Controls.Add(dgv);
 
             logLstBox = BeautyfyForms.AddListBox(new Point(0, 100 + dgv.Height + 5), form.Size);

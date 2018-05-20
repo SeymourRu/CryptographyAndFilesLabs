@@ -27,7 +27,7 @@ namespace CoreDefinitions.Helpers
             return btn;
         }
 
-        public static DataGridView AddDataGridView(Point pos, Size formSize, int rows, string[] headers)
+        public static DataGridView AddDataGridViewHeadersOnLeft(Point pos, Size formSize, int rows, string[] headers)
         {
             var dgv = new DataGridView();
             dgv.Location = pos;
@@ -55,6 +55,31 @@ namespace CoreDefinitions.Helpers
 
             return dgv;
         }
+
+        public static DataGridView AddDataGridViewHeadersOnUp(Point pos, Size formSize, string[] headers, bool readonlyMode = true)
+        {
+            var dgv = new DataGridView();
+            dgv.Location = pos;
+            dgv.Size = new Size(formSize.Width - 20, formSize.Height - pos.Y - 40);
+            dgv.AllowUserToAddRows = false;
+            dgv.ReadOnly = readonlyMode;
+            dgv.ScrollBars = ScrollBars.Both;
+
+            int counter = 0;
+            foreach (var value in headers)
+            {
+                dgv.Columns.Add("value_" + counter.ToString(), value);
+                counter += 1;
+            }
+
+            for (int i = 0; i < dgv.Columns.Count; i++)
+            {
+                dgv.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            return dgv;
+        }
+
 
         public static ListBox AddListBox(Point pos, Size formSize)
         {
@@ -94,7 +119,7 @@ namespace CoreDefinitions.Helpers
             return textBox;
         }
 
-        public static Label CreateLabel(Point pos, string text,bool custom = false,int len = 0)
+        public static Label CreateLabel(Point pos, string text, bool custom = false, int len = 0)
         {
             var lbl = new Label();
             lbl.Location = pos;
@@ -107,7 +132,7 @@ namespace CoreDefinitions.Helpers
             {
                 lbl.Width = text.Length * 35;
             }
-            
+
             lbl.Height = 20;
             return lbl;
         }
@@ -136,7 +161,7 @@ namespace CoreDefinitions.Helpers
             return chkbx;
         }
 
-        public static NumericUpDown CreateNumericUpDown(Point pos,int min,int max, bool onlyread)
+        public static NumericUpDown CreateNumericUpDown(Point pos, int min, int max, bool onlyread)
         {
             var numericUpDown = new NumericUpDown();
             numericUpDown.Location = pos;
@@ -150,6 +175,14 @@ namespace CoreDefinitions.Helpers
             }
 
             return numericUpDown;
+        }
+
+        public static TreeView AddTreeView(Point pos, Size formSize)
+        {
+            var treeView = new TreeView();
+            treeView.Location = pos;
+            treeView.Size = formSize;
+            return treeView;
         }
     }
 }

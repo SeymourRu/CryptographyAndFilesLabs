@@ -108,6 +108,8 @@
     <Compile Include="Tasks\Cryptography\Crypto_Task3_2.cs" />
     <Compile Include="Tasks\Cryptography\Crypto_Task3_3.cs" />
     <Compile Include="Tasks\Cryptography\Crypto_Task3_4.cs" />
+    <Compile Include="Tasks\Cryptography\Crypto_Task4_1.cs" />
+    <Compile Include="Tasks\Cryptography\Crypto_Task4_2.cs" />
     <Compile Include="Tasks\IBaseTask.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\Cryptography\Crypto_Task1_1.cs" />
