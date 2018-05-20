@@ -38,6 +38,8 @@ ___basepath\Cryptography\Crypto_Task3_1.cs___|Fermat primality test
 ___basepath\Cryptography\Crypto_Task3_2.cs___|Rabin-Miller primality test
 ___basepath\Cryptography\Crypto_Task3_3.cs___|Pollard's p − 1 factorization algorithm
 ___basepath\Cryptography\Crypto_Task3_4.cs___|Pohling-Hellman`s algorithm
+___basepath\Cryptography\Crypto_Task4_1.cs___|Resolution of collisions of hashes with the method of chains
+___basepath\Cryptography\Crypto_Task4_2.cs___|Resolution of collisions of hashes with the method of open addressing
 ___basepath\Cryptography\Crypto_CourseWork.cs___|Dixon's factorization algorithm
 
 ### Modern methods of information storage and processing: ###
