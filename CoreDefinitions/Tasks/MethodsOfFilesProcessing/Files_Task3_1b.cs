@@ -13,8 +13,6 @@ namespace CoreDefinitions.Tasks
     public class Files_Task3_1b : ITask<Files_Task3_1b>, IBaseTask
     {
         TaskAppType _subSystemType;
-        //BinaryTree<int?, SelfOrganizeIndexNode> _head;
-        //BinaryTree<int?, SelfOrganizeIndexNode> _tree;
         Random random;
 
         BranchingTree _tree;
@@ -40,39 +38,16 @@ namespace CoreDefinitions.Tasks
         public Files_Task3_1b()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
-            //_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-            //_head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-            //_head.Right = _tree;
-            //_head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
-            //_tree = new BranchingTree(new List<char>() { 'a', 'b', 'c', 'd', 'e' }, 10);
             _tree = new BranchingTree();
-
-            /*
-            _tree.AddWord("Kura");
-
-            var test1 = _tree.WordExists("Kurenai");
-
-            _tree.AddWord("Kurenai");
-
-            var test2 = _tree.WordExists("Kura");
-
-            _tree.AddWord("Kurona");
-            _tree.AddWord("Kurara");
-            */
-
             random = new Random();
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
         {
-            form.Text = "Задание № 1";
-            form.SetDefaultVals(new System.Drawing.Size(800, 500));
+            form.Text = "Задание № 1 (b)";
+            form.SetDefaultVals(new System.Drawing.Size(800, 700));
             var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
-                //_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-                //_head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-                //_head.Right = _tree;
-                //_head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
                 _tree = new BranchingTree();
                 treeViewer.Clear();
             });
@@ -175,7 +150,7 @@ namespace CoreDefinitions.Tasks
             tmpbutt = BeautyfyForms.AddButton(" Экспорт ", new Point(80, 180), (o, k) =>
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
-                saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Луч", "trieview");
+                saveFile.Filter = string.Format("{0} (*.{1})|*.{1}", "Луч", "branchview");
                 if (saveFile.ShowDialog() == DialogResult.OK)
                 {
                     _buttonsToHide.ForEach(x => x.Enabled = false);
@@ -251,7 +226,7 @@ namespace CoreDefinitions.Tasks
             _checkInput = BeautyfyForms.CreateTextBox(new Point(150, 103), false);
             form.Controls.Add(_checkInput);
 
-            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 200);
+            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 400);
             form.Controls.Add(treeViewer);
 
             form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 145), "Добавлять Х в качестве null-ветвей", true, 190));
@@ -329,6 +304,5 @@ namespace CoreDefinitions.Tasks
             //_tree = _head.Right;
             return true;
         }
-
     }
 }

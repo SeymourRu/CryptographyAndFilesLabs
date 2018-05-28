@@ -47,7 +47,7 @@ namespace CoreDefinitions.Tasks
             //_tree = new BranchingTree(new List<char>() { 'a', 'b', 'c', 'd', 'e' }, 10);
             _tree = new Trie();
 
-            ///*
+            /*
             _tree.AddWord("Kura");
             _tree.AddWord("Kuraga");
             _tree.AddWord("Kuraja");
@@ -60,7 +60,7 @@ namespace CoreDefinitions.Tasks
             //var test1 = _tree.WordExists("Kurenai");
             //var test2 = _tree.WordExists("Kura");
 
-            //*/
+            */
 
             random = new Random();
         }
@@ -68,7 +68,7 @@ namespace CoreDefinitions.Tasks
         public void LocateControls(Form form, ConsoleHandler console)
         {
             form.Text = "Задание № 1";
-            form.SetDefaultVals(new System.Drawing.Size(800, 500));
+            form.SetDefaultVals(new System.Drawing.Size(800, 700));
             var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
                 //_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
@@ -253,7 +253,7 @@ namespace CoreDefinitions.Tasks
             _checkInput = BeautyfyForms.CreateTextBox(new Point(150, 103), false);
             form.Controls.Add(_checkInput);
 
-            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 200);
+            treeViewer = BeautyfyForms.CreateMLTextBox(new Point(5, 250 + 5), 780, 400);
             form.Controls.Add(treeViewer);
 
             form.Controls.Add(BeautyfyForms.CreateLabel(new Point(150, 145), "Добавлять Х в качестве null-ветвей", true, 190));

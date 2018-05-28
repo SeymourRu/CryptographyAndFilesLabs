@@ -298,7 +298,7 @@ namespace CoreDefinitions.Helpers
                 difference2 += word2[i];
             }
 
-            return new Tuple<string, char, char>(common, difference1.Length > 0 ? difference1[0] : '\0', difference2.Length > 0 ? difference2[0] : '\0');
+            return new Tuple<string, char, char>(common, difference1.Length > 0 ? difference1[0] : '^', difference2.Length > 0 ? difference2[0] : '^');
         }
     }
 
@@ -306,10 +306,72 @@ namespace CoreDefinitions.Helpers
     {
         public string _prefix = "";
         public int _depth;
-        public Dictionary<char, List<TrieNode>> _nodeCollection;
-        public TrieLeafNode()
+        public Dictionary<char, TrieNode> _nodesCollection;
+        public TrieLeafNode(string prefix, int depth)
         {
-            _nodeCollection = new Dictionary<char, List<TrieNode>>();
+            _nodesCollection = new Dictionary<char, TrieNode>();
+            _prefix = prefix;
+            _depth = depth;
+        }
+
+        public void getNode(StringBuilder output, int depth, bool markUnused, bool toListBox)
+        {
+            if (toListBox)
+            {
+                if (depth > 7)
+                {
+                    output.Append("***");
+                    return;
+                }
+            }
+
+            if (_nodesCollection.Count > 0)
+            {
+                var left = _nodesCollection.Take((int)Math.Floor(_nodesCollection.Count / 2d));
+                foreach (var item in left)
+                {
+                    item.Value.getNode(output, depth + 1, markUnused, toListBox);
+                }
+            }
+            else
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
+            }
+
+            if (this._prefix == null)
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth);
+                    output.AppendLine("[ X ]");
+                }
+            }
+            else
+            {
+                output.Append('\t', depth);
+                output.AppendLine("[ " + _prefix + " ]");
+            }
+
+            if (_nodesCollection.Count > 0)
+            {
+                var rignt = _nodesCollection.Skip((int)Math.Floor(_nodesCollection.Count / 2d)).Take(_nodesCollection.Count);
+                foreach (var item in rignt)
+                {
+                    item.Value.getNode(output, depth + 1, markUnused, toListBox);
+                }
+            }
+            else
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
+            }
         }
     }
 
@@ -318,25 +380,6 @@ namespace CoreDefinitions.Helpers
         public char _letter;
         public string _singleWord;
         public List<TrieLeafNode> _leafNodeCollection;
-
-
-
-        //public bool HasSuchPath(string key)
-        //{
-        //    if (_singleWord == null)
-        //    {
-        //        var nodes = collection.Where(x => x.HasSuchPath(key));
-        //        if (nodes.Count() > 0)
-        //        {
-        //            return true;
-        //        }
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        return _singleWord.StartsWith(key);
-        //    }
-        //}
 
         public TrieNode(char letter, string key)
         {
@@ -368,34 +411,29 @@ namespace CoreDefinitions.Helpers
 
                         if (node != null)
                         {
-                            if (node._nodeCollection.ContainsKey(suitableCandidate.Item2))
+                            if (node._nodesCollection.ContainsKey(suitableCandidate.Item2))
                             {
-                                node._nodeCollection[suitableCandidate.Item2].Add(new TrieNode(suitableCandidate.Item2, copyOfWord));
+                                node._nodesCollection[suitableCandidate.Item2].AddWord(ref word, suitableCandidate.Item1.Length);
                             }
                             else
                             {
-                                node._nodeCollection.Add(suitableCandidate.Item2, new List<TrieNode>() { new TrieNode(suitableCandidate.Item2, copyOfWord) });
+                                node._nodesCollection.Add(suitableCandidate.Item2, new TrieNode(suitableCandidate.Item2, copyOfWord));
                             }
                         }
                         else
                         {
-                            var newLeaf = new TrieLeafNode();
-                            newLeaf._prefix = suitableCandidate.Item1;
-                            newLeaf._depth = pos;
-                            newLeaf._nodeCollection.Add(suitableCandidate.Item2, new List<TrieNode>() { new TrieNode(suitableCandidate.Item2, copyOfWord) });
+                            var newLeaf = new TrieLeafNode(suitableCandidate.Item1, pos);
+                            newLeaf._nodesCollection.Add(suitableCandidate.Item2, new TrieNode(suitableCandidate.Item2, copyOfWord));
                             _leafNodeCollection.Add(newLeaf);
                         }
                         return true;
                     }
                     else
                     {
-                        var newLeaf = new TrieLeafNode();
-                        newLeaf._prefix = suitableCandidate.Item1;
-                        newLeaf._depth = pos;
-                        newLeaf._nodeCollection.Add(suitableCandidate.Item2, new List<TrieNode>() { new TrieNode(suitableCandidate.Item2, copyOfWord) });
+                        var newLeaf = new TrieLeafNode(suitableCandidate.Item1, pos);
+                        newLeaf._nodesCollection.Add(suitableCandidate.Item2, new TrieNode(suitableCandidate.Item2, copyOfWord));
                         _leafNodeCollection.Add(newLeaf);
                         return true;
-                        //add new value
                     }
                 }
                 else // have link to other node
@@ -409,54 +447,16 @@ namespace CoreDefinitions.Helpers
                     else // convert to collection
                     {
                         var key = TrieHelper.GetCommonPart(_singleWord, word);
-                        var existingKeys = _leafNodeCollection.Where(x => x._prefix == key.Item1);
 
-                        if (existingKeys.Count() != 0)
-                        {
-                            var existingLeaf = existingKeys.First();
-
-                            if (existingLeaf._nodeCollection.ContainsKey(key.Item3))
-                            {
-
-                            }
-                            else
-                            {
-                                existingLeaf._nodeCollection.Add(key.Item3, new List<TrieNode>() { });
-                            }
-                        }
-                        else
-                        {
-                            var newLeaf = new TrieLeafNode();
-                            newLeaf._prefix = key.Item1;
-                            newLeaf._depth = pos;
-                            newLeaf._nodeCollection.Add(key.Item2, new List<TrieNode>() { new TrieNode(key.Item2, _singleWord) });
-                            newLeaf._nodeCollection.Add(key.Item3, new List<TrieNode>() { new TrieNode(key.Item3, word) });
-                            _leafNodeCollection.Add(newLeaf);
-                        }
-
-
+                        var newLeaf = new TrieLeafNode(key.Item1, pos);
+                        newLeaf._nodesCollection.Add(key.Item2, new TrieNode(key.Item2, _singleWord));
+                        newLeaf._nodesCollection.Add(key.Item3, new TrieNode(key.Item3, word));
+                        _leafNodeCollection.Add(newLeaf);
                         _singleWord = null;
                     }
 
                     return true;
-                    //if (_singleWord.StartsWith(subKey))
-                    //{
-                    //    var newNode = new TrieNode(searchChar, null, _depth);
-                    //    newNode.AddToCollection(new TrieNode(searchChar, _singleWord, _depth));
-                    //    newNode.AddToCollection(new TrieNode(searchChar, word, _depth));
-                    //    //collection.Add(new TrieNode(searchChar, word, _depth));
-                    //    collection.Add(newNode);
-                    //    _singleWord = null;
-                    //    return true;
-                    //}
-                    //else
-                    //{
-
-                    //    return true;
-                    //}
                 }
-
-                return false;
             }
             catch (Exception ex)
             {
@@ -551,51 +551,51 @@ namespace CoreDefinitions.Helpers
                 }
             }
 
-            //if (collection.Count > 0)
-            //{
-            //    for (int i = 0; i < (int)Math.Floor(collection.Count / 2d); i++)
-            //    {
-            //        collection[i].getNode(output, depth + 1, markUnused, toListBox);
-            //    }
-            //}
-            //else
-            //{
-            //    if (markUnused)
-            //    {
-            //        output.Append('\t', depth + 1);
-            //        output.AppendLine("X");
-            //    }
-            //}
-
-            if (this._singleWord == null)
+            if (_leafNodeCollection.Count > 0)
             {
-                if (markUnused)
+                for (int i = 0; i < (int)Math.Floor(_leafNodeCollection.Count / 2d); i++)
                 {
-                    output.Append('\t', depth);
-                    output.AppendLine("X");
+                    _leafNodeCollection[i].getNode(output, depth + 1, markUnused, toListBox);
                 }
             }
             else
             {
-                output.Append('\t', depth);
-                output.AppendLine(_singleWord.ToString());
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
             }
 
-            //if (collection.Count > 0)
-            //{
-            //    for (int i = (int)Math.Floor(collection.Count / 2d); i < collection.Count; i++)
-            //    {
-            //        collection[i].getNode(output, depth + 1, markUnused, toListBox);
-            //    }
-            //}
-            //else
-            //{
-            //    if (markUnused)
-            //    {
-            //        output.Append('\t', depth + 1);
-            //        output.AppendLine("X");
-            //    }
-            //}
+            //_letter = letter;
+            //_singleWord = key;
+
+            if (this._singleWord != null)
+            {
+                output.Append('\t', depth);
+                output.AppendLine("{ " + _letter + " }: " + _singleWord);
+            }
+            else
+            {
+                output.Append('\t', depth);
+                output.AppendLine("{ " + _letter + " } ->");
+            }
+
+            if (_leafNodeCollection.Count > 0)
+            {
+                for (int i = (int)Math.Floor(_leafNodeCollection.Count / 2d); i < _leafNodeCollection.Count; i++)
+                {
+                    _leafNodeCollection[i].getNode(output, depth + 1, markUnused, toListBox);
+                }
+            }
+            else
+            {
+                if (markUnused)
+                {
+                    output.Append('\t', depth + 1);
+                    output.AppendLine("X");
+                }
+            }
         }
     }
 
