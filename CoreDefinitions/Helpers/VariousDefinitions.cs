@@ -108,6 +108,29 @@ namespace CoreDefinitions.Helpers
             }
         }
 
+        public static void LoadFile(string tip, string ext, List<string> lst)
+        {
+            var dlg = new OpenFileDialog();
+            dlg.Multiselect = false;
+            dlg.Filter = string.Format("{0} (*.{1})|*.{1}", tip, ext);
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var lines = System.IO.File.ReadAllLines(dlg.FileName);
+                    lst.Clear();
+                    foreach (var line in lines.Where(x => !string.IsNullOrEmpty(x)))
+                    {
+                        lst.Add(line);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Не верный файл:" + dlg.FileName);
+                }
+            }
+        }
+
         public static void LoadFileNode(string tip, string ext, List<Node> lst)
         {
             var dlg = new OpenFileDialog();

@@ -121,6 +121,8 @@
     <Compile Include="Tasks\MethodsOfFilesProcessing\Files_Task2_1.cs" />
     <Compile Include="Tasks\MethodsOfFilesProcessing\Files_Task2_2.cs" />
     <Compile Include="Tasks\MethodsOfFilesProcessing\Files_Task2_3.cs" />
+    <Compile Include="Tasks\MethodsOfFilesProcessing\Files_Task3_1.cs" />
+    <Compile Include="Tasks\MethodsOfFilesProcessing\Files_Task3_1b.cs" />
     <Compile Include="Tasks\Sandbox\Sandbox_ConsoleTest.cs" />
     <Compile Include="Tasks\Sandbox\SandBox_WinFormsTest.cs" />
     <Compile Include="Views\IAboutView.cs" />

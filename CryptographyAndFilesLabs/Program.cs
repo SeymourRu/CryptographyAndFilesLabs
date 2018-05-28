@@ -46,6 +46,9 @@ namespace CryptographyAndFilesLabs
             builder.RegisterType<Files_Task2_1>().As<ITask<Files_Task2_1>>().As<IBaseTask>();
             builder.RegisterType<Files_Task2_2>().As<ITask<Files_Task2_2>>().As<IBaseTask>();
             builder.RegisterType<Files_Task2_3>().As<ITask<Files_Task2_3>>().As<IBaseTask>();
+
+            builder.RegisterType<Files_Task3_1>().As<ITask<Files_Task3_1>>().As<IBaseTask>();
+            builder.RegisterType<Files_Task3_1b>().As<ITask<Files_Task3_1b>>().As<IBaseTask>();
         }
 
         private static void LoadSandbox(ContainerBuilder builder)
