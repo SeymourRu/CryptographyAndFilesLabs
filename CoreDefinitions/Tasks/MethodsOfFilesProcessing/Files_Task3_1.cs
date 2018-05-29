@@ -13,11 +13,9 @@ namespace CoreDefinitions.Tasks
     public class Files_Task3_1 : ITask<Files_Task3_1>, IBaseTask
     {
         TaskAppType _subSystemType;
-        //BinaryTree<int?, SelfOrganizeIndexNode> _head;
-        //BinaryTree<int?, SelfOrganizeIndexNode> _tree;
         Random random;
 
-        Trie _tree;
+        oTrieTree _tree;
 
         List<Button> _buttonsToHide = new List<Button>();
         Timer _timerProgress;
@@ -40,27 +38,17 @@ namespace CoreDefinitions.Tasks
         public Files_Task3_1()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
-            //_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-            //_head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-            //_head.Right = _tree;
-            //_head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
-            //_tree = new BranchingTree(new List<char>() { 'a', 'b', 'c', 'd', 'e' }, 10);
-            _tree = new Trie();
+            _tree = new oTrieTree();
 
-            /*
-            _tree.AddWord("Kura");
-            _tree.AddWord("Kuraga");
-            _tree.AddWord("Kuraja");
-            _tree.AddWord("Kuraza");
-            _tree.AddWord("Kuroko");
-            _tree.AddWord("Aura");
-            _tree.AddWord("Kurona");
-            _tree.AddWord("Kurara");
-            _tree.AddWord("Kuragada");
-            //var test1 = _tree.WordExists("Kurenai");
-            //var test2 = _tree.WordExists("Kura");
-
-            */
+            //_tree.AddWord("Kura");
+            //_tree.AddWord("Kuraga");
+            //_tree.AddWord("Kuraja");
+            //_tree.AddWord("Kuraza");
+            //_tree.AddWord("Kuroko");
+            //_tree.AddWord("Aura");
+            //_tree.AddWord("Kurona");
+            //_tree.AddWord("Kurara");
+            //_tree.AddWord("Kuragada");
 
             random = new Random();
         }
@@ -71,12 +59,9 @@ namespace CoreDefinitions.Tasks
             form.SetDefaultVals(new System.Drawing.Size(800, 700));
             var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
-                //_tree = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-                //_head = new BinaryTree<int?, SelfOrganizeIndexNode>(null, default(SelfOrganizeIndexNode));
-                //_head.Right = _tree;
-                //_head.Left = new BinaryTree<int?, SelfOrganizeIndexNode>(0, default(SelfOrganizeIndexNode));
-                _tree = new Trie();
+                _tree = new oTrieTree();
                 treeViewer.Clear();
+                _addedWords.Items.Clear();
             });
 
             _buttonsToHide.Add(tmpbutt);
@@ -96,13 +81,15 @@ namespace CoreDefinitions.Tasks
                 }
 
                 var text = _addInput.Text;
-                if (_tree.AddWord(text))
+                _tree.AddWord(text);
+
+                if (!_addedWords.Items.Contains(text))
                 {
-                    if (!_addedWords.Items.Contains(text))
-                    {
-                        _addedWords.Items.Add(text);
-                    }
+                    _addedWords.Items.Add(text);
                 }
+
+
+                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
             });
 
             _buttonsToHide.Add(tmpbutt);
@@ -119,6 +106,7 @@ namespace CoreDefinitions.Tasks
                 var text = _deleteInput.Text;
                 _tree.DeleteWord(text);
                 _addedWords.Items.Remove(text);
+                treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
             });
 
             _buttonsToHide.Add(tmpbutt);
@@ -133,7 +121,9 @@ namespace CoreDefinitions.Tasks
                 }
 
                 var text = _checkInput.Text;
-                if (_tree.WordExists(text))
+
+                var result = _tree.WordExists(text);
+                if (result)
                 {
                     MessageBox.Show("Существует");
                 }
@@ -158,10 +148,15 @@ namespace CoreDefinitions.Tasks
                 var keys = new List<string>();
                 Helper.LoadFile("Список слов", "wordlst", keys);
 
-                foreach (var key in keys)
+                if (keys.Count > 0)
                 {
-                    if (_tree.AddWord(key))
+                    _tree = new oTrieTree();
+                    treeViewer.Clear();
+                    _addedWords.Items.Clear();
+
+                    foreach (var key in keys)
                     {
+                        _tree.AddWord(key);
                         if (!_addedWords.Items.Contains(key))
                         {
                             _addedWords.Items.Add(key);

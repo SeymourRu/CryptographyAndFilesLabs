@@ -34,7 +34,6 @@ namespace CryptographyAndFilesLabs
             builder.RegisterType<Crypto_Task4_2>().As<ITask<Crypto_Task4_2>>().As<IBaseTask>();
 
             builder.RegisterType<Crypto_CourseWork>().As<ITask<Crypto_CourseWork>>().As<IBaseTask>();
-            //builder.RegisterType<Crypto_Task2_2>().As<ITask<Crypto_Task2_2>>().As<IBaseTask>();
         }
 
         private static void LoadFilesProcessing(ContainerBuilder builder)
@@ -49,6 +48,7 @@ namespace CryptographyAndFilesLabs
 
             builder.RegisterType<Files_Task3_1>().As<ITask<Files_Task3_1>>().As<IBaseTask>();
             builder.RegisterType<Files_Task3_1b>().As<ITask<Files_Task3_1b>>().As<IBaseTask>();
+            builder.RegisterType<Files_Task3_1c>().As<ITask<Files_Task3_1c>>().As<IBaseTask>();
         }
 
         private static void LoadSandbox(ContainerBuilder builder)

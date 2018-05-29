@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace CoreDefinitions.Tasks
 {
-    public class Files_Task3_1b : ITask<Files_Task3_1b>, IBaseTask
+    public class Files_Task3_1c : ITask<Files_Task3_1c>, IBaseTask
     {
         TaskAppType _subSystemType;
         Random random;
 
-        BranchingTree _tree;
+        Trie _tree;
 
         List<Button> _buttonsToHide = new List<Button>();
         Timer _timerProgress;
@@ -35,20 +35,20 @@ namespace CoreDefinitions.Tasks
             }
         }
 
-        public Files_Task3_1b()
+        public Files_Task3_1c()
         {
             _subSystemType = Helpers.TaskAppType.GUI;
-            _tree = new BranchingTree();
+            _tree = new Trie();
             random = new Random();
         }
 
         public void LocateControls(Form form, ConsoleHandler console)
         {
-            form.Text = "Задание № 1 (b)";
+            form.Text = "Задание № 1 (c)";
             form.SetDefaultVals(new System.Drawing.Size(800, 700));
             var tmpbutt = BeautyfyForms.AddButton("Очистить дерево", new Point(0, 10), (o, k) =>
             {
-                _tree = new BranchingTree();
+                _tree = new Trie();
                 treeViewer.Clear();
                 _addedWords.Items.Clear();
             });
@@ -58,7 +58,7 @@ namespace CoreDefinitions.Tasks
 
             form.Controls.Add(BeautyfyForms.AddButton(" Суть ", new Point(200, 10), (o, k) =>
             {
-                MessageBox.Show("Задача № 1b. Параграф 6.3, Реализация структуры \"Лес\" ");
+                MessageBox.Show("Задача № 1c. Параграф 6.3, Реализация структуры \"Лес\" ");
             }));
 
             tmpbutt = BeautyfyForms.AddButton("Добавить значение", new Point(0, 40), (o, k) =>
@@ -70,13 +70,12 @@ namespace CoreDefinitions.Tasks
                 }
 
                 var text = _addInput.Text;
-                if (_tree.AddWord(text))
+                _tree.AddWord(text);
+                if (!_addedWords.Items.Contains(text))
                 {
-                    if (!_addedWords.Items.Contains(text))
-                    {
-                        _addedWords.Items.Add(text);
-                    }
+                    _addedWords.Items.Add(text);
                 }
+
 
                 treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
             });
@@ -93,8 +92,16 @@ namespace CoreDefinitions.Tasks
                 }
 
                 var text = _deleteInput.Text;
-                _tree.DeleteWord(text);
-                _addedWords.Items.Remove(text);
+                try
+                {
+                    _tree.RemovePrefix(text);
+                    _addedWords.Items.Remove(text);
+                }
+                catch
+                {
+                    MessageBox.Show("Не возможно удалить");
+                    return;
+                }
 
                 treeViewer.Text = (_tree != null) ? _tree.getTreeView(_addXToEnd.Checked) : "";
             });
@@ -111,7 +118,7 @@ namespace CoreDefinitions.Tasks
                 }
 
                 var text = _checkInput.Text;
-                if (_tree.WordExists(text))
+                if (_tree.HasPrefix(text))
                 {
                     MessageBox.Show("Существует");
                 }
@@ -138,18 +145,16 @@ namespace CoreDefinitions.Tasks
 
                 if (keys.Count > 0)
                 {
-                    _tree = new BranchingTree();
+                    _tree = new Trie();
                     treeViewer.Clear();
                     _addedWords.Items.Clear();
 
                     foreach (var key in keys)
                     {
-                        if (_tree.AddWord(key))
+                        _tree.AddWord(key);
+                        if (!_addedWords.Items.Contains(key))
                         {
-                            if (!_addedWords.Items.Contains(key))
-                            {
-                                _addedWords.Items.Add(key);
-                            }
+                            _addedWords.Items.Add(key);
                         }
                     }
                 }
